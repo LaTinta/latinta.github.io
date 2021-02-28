@@ -1,24 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Hello World</title>
-    <url>/2021/02/28/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+    <title>背包九讲</title>
+    <url>/2021/03/01/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<h2 id="一、01-背包"><a href="#一、01-背包" class="headerlink" title="一、01 背包"></a>一、01 背包</h2><h3 id="1、题目"><a href="#1、题目" class="headerlink" title="1、题目"></a>1、题目</h3><p>有 $N$ 件物品和一个容量为 $V$ 的背包。放入第 $i$ 件物品耗费的费用是 $C_{i}$ ，得到的价值是 $W_{i}$。求解将哪些物品装入背包可使价值总和最大。</p>
+<h3 id="2、基本思路"><a href="#2、基本思路" class="headerlink" title="2、基本思路"></a>2、基本思路</h3><p>定义 $F[i, v]$ 表示前 $i$ 件物品恰放入一个容量为 $v$ 的背包可以获得的最大价值，其状态转移方程是</p>
+<p>$F[i, v]=\max \left{F[i-1, v], F\left[i-1, v-C_{i}\right]+W_{i}\right}$</p>
+<p>若只考虑第 $i$ 件物品的策略 (放或不放)，那么就可以转化为一个只和前 $i−1$ 件物品相关的问题。</p>
+<ul>
+<li>如果不放第 $i$ 件物品，那么问题就转化为「前 $i − 1$ 件物品放入容量为 $v$ 的背包中」，最大价值为 $F[i − 1, v]$。</li>
+<li>如果放入第 $i$ 件物品，那么问题就转化为「前 $i − 1$ 件物品放入剩下的容量为 $v − C_{i}$ 的背包中」，最大价值为 $F[i − 1, v − C_{i} ]$ 加上通过放入第 $i$ 件物品获得的价值 $W_{i}$。</li>
+</ul>
+<h3 id="3、初始化的细节问题"><a href="#3、初始化的细节问题" class="headerlink" title="3、初始化的细节问题"></a>3、初始化的细节问题</h3><p>初始化的 $F$ 数组事实上就是在没有任何物品可以放入背包时的合法状态。不同的要求，对应的初始化不同</p>
+<ul>
+<li><p>必须装满背包：$F[0,0]=0$，其他 $F[0,1..V] = -\infin$</p>
+</li>
+<li><p>不用装满背包：$F[0,0..V] = 0$</p>
+</li>
+</ul>
+<p>如果要求背包恰好装满，那么此时只有容量为 $0$ 的背包在什么都不装的情况下有合法解 0，其它容量的背包均没有合法的解，属于未定义的状态，应该被赋值为 $-\infin$。</p>
+<p>如果背包并非必须被装满，那么任何容量的背包在什么都不装的情况下都有合法解 0，所以初始时状态的值全部为 0。</p>
+<h2 id="二、完全背包问题"><a href="#二、完全背包问题" class="headerlink" title="二、完全背包问题"></a>二、完全背包问题</h2><h3 id="1、题目-1"><a href="#1、题目-1" class="headerlink" title="1、题目"></a>1、题目</h3><p>有 $N$ 种物品和一个容量为 $V$ 的背包，每种物品都有无限件可用。放入第 $i$ 件物品耗费的费用是 $C_{i}$ ，得到的价值是 $W_{i}$。求解将哪些物品装入背包可使价值总和最大。</p>
+<h3 id="2、基本思路-1"><a href="#2、基本思路-1" class="headerlink" title="2、基本思路"></a>2、基本思路</h3><p>从每种物品的角度考虑，与它相关的策略并非取或不取两种，而是有取 0 件、取 1 件、取 2 件、直至取 $\left\lfloor V / C_{i}\right\rfloor$ 件等多种。</p>
+<p>仍然按照解 01 背包时的思路，定义 $F[i, v]$ 表示前 $i$ 件物品恰放入一个容量为 $v$ 的背包可以获得的最大价值，其状态转移方程是</p>
+<p>$F[i, v]=\max \left{F\left[i-1, v-k C_{i}\right]+k W_{i} \mid 0 \leq k C_{i} \leq v\right}$</p>
+<h3 id="3、转化为-01-背包问题"><a href="#3、转化为-01-背包问题" class="headerlink" title="3、转化为 01 背包问题"></a>3、转化为 01 背包问题</h3><p>考虑到第 $i$ 种物品最多选 $\left\lfloor V / C_{i}\right\rfloor$ 件，于是可以把第 $i$ 种物品转化为 $\left\lfloor V / C_{i}\right\rfloor$ 件费用及价值均不变的物品，然后求解这个 01 背包问题。这样的做法没有改进时间复杂度，但这种方法指明了将完全背包问题转化为 01 背包问题的思路，即将一种物品拆成多件只能选 0 件或 1 件的 01 背包中的物品。</p>
+<p>更高效的转化方法是把第 $i$ 种物品拆成费用为 $C_{i}2^{k}$、价值为 $W_{i}2^{k}$ 的若干件物 品，其中 $k$ 取满足 $C_{i}2^{k} \leq V$ 的非负整数，这是二进制的思想。不管最优策略选几件第 $i$ 种物品，其件数总可以表示成若干个 $2^k$ 件物品的和。这样就把每种物品拆成 $O\left(\log \left\lfloor V / C_{i}\right\rfloor\right)$ 件物品，是一个很大的改进。</p>
+<h2 id="三、多重背包问题"><a href="#三、多重背包问题" class="headerlink" title="三、多重背包问题"></a>三、多重背包问题</h2><h3 id="1、题目-2"><a href="#1、题目-2" class="headerlink" title="1、题目"></a>1、题目</h3><p>有 $N$ 种物品和一个容量为 $V$ 的背包。第 $i$ 种物品最多有 $M_i$ 件可用，每件耗费的费用是 $C_{i}$ ，得到的价值是 $W_{i}$。求解将哪些物品装入背包可使价值总和最大。</p>
+<h3 id="2、基本思路-2"><a href="#2、基本思路-2" class="headerlink" title="2、基本思路"></a>2、基本思路</h3><p>对于第 $i$ 种物品有 $M_{i} + 1$ 种策略，取 0 件、取 1 件、直至取 $M_{i}$ 件。令 $F[i, v]$ 表示前 $i$ 种物品恰放入一个容量为 $v$ 的背包的最大价值，则有状态转移方程</p>
+<p>$F[i, v]=\max \left{F\left[i-1, v-k C_{i}\right]+k W_{i} \mid 0 \leq k \leq M_{i}\right}$</p>
+<h3 id="3、转化为-01-背包问题-1"><a href="#3、转化为-01-背包问题-1" class="headerlink" title="3、转化为 01 背包问题"></a>3、转化为 01 背包问题</h3><p>把第 $i$ 种物品换成 $M_{i}$ 件 01 背包中的物品，则得到了物品数为 $\sum{M_{i}}$ 的 01 背包问题。</p>
+<p>仍然考虑二进制的思想，把第 $i$ 种物品换成若干件物品，使得原问题中第 $i$ 种物品可取的每种策略均能等价于取若干件代换以后的物品。另外，取超过 $M_{i}$ 件的策略必不能出现。</p>
+<p>将第 $i$ 种物品分成若干件 01 背包中的物品， 其中每件物品有一个系数，这件物品的费用和价值均是原来的费用和价值乘以这个系数。令这些系数分别为 $1$, $2$, $2^2$ . . . $2^{k−1}$, $M_{i} − 2^{k} + 1$，且 $k$ 是满足 $M_{i} − 2^{k} + 1 &gt; 0$ 的最大整数。</p>
+<h3 id="4、可行性问题"><a href="#4、可行性问题" class="headerlink" title="4、可行性问题"></a>4、可行性问题</h3><p>当问题是「每种有若干件的物品能否填满给定容量的背包」，只须考虑填满背包的可行性、不需考虑每件物品的价值时，多重背包问题有 $O(VN)$ 复杂度的算法。</p>
+<p>介绍一种实现较为简单的 $O(VN)$ 复杂度解多重背包问题的算法。它的基本思想是这样的，设 $F[i, v]$ 表示「用前 $i$ 种物品填满容量为 $v$ 的背包后， 最多还剩下几个第 $i$ 种物品可用」，如果 $F[i, v] = −1$ 则说明这种状态不可行， 若可行应满足 $0 \leq F[i, v] \leq M_{i}$。</p>
+<img src="../Library/Mobile Documents/com~apple~CloudDocs/图床/image-20210126172519779.png" alt="image-20210126172519779" style="zoom:50%;" />
 
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<h2 id="四、混合三种背包问题"><a href="#四、混合三种背包问题" class="headerlink" title="四、混合三种背包问题"></a>四、混合三种背包问题</h2><h3 id="1、题目-3"><a href="#1、题目-3" class="headerlink" title="1、题目"></a>1、题目</h3><p>有 $N$ 件物品和一个容量为 $V$ 的背包。放入第 $i$ 件物品耗费的费用是 $C_{i}$ ，得到的价值是 $W_{i}$。有的物品只可以取一次 (01 背包)，有的物品可以取无限次 (完全背包)，有的物品可以取的次数有一个上限 (多重背包)。求解将哪些物品装入背包可使价值总和最大。</p>
+<h3 id="2、01-背包与完全背包的混合"><a href="#2、01-背包与完全背包的混合" class="headerlink" title="2、01 背包与完全背包的混合"></a>2、01 背包与完全背包的混合</h3><p>考虑到 01 背包和完全背包中给出的伪代码只有一处不同，故如果只有两类物品：一类物品只能取一次，另一类物品可以取无限次，那么只需在对每个物品应用转移方程时，根据物品的类别选用顺序或逆序的循环即可。伪代码如下：</p>
+<h3 id="3、再加上多重背包"><a href="#3、再加上多重背包" class="headerlink" title="3、再加上多重背包"></a>3、再加上多重背包</h3><p>如果再加上最多可以取有限次的多重背包式的物品，那么利用单调队列，也可以给出均摊 $\mathrm{O}(VN)$ 的解法。</p>
+<p>如果不考虑单调队列算法的话，用将每个这类物品分成 $\mathrm{O}\left(\log M_{i}\right)$ 个  01 背包的物品的方法也已经很优。</p>
+<img src="../Library/Mobile Documents/com~apple~CloudDocs/图床/image-20210126173329269.png" alt="image-20210126173329269" style="zoom:50%;" />
 
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+
+
+<h2 id="五、二维费用的背包问题"><a href="#五、二维费用的背包问题" class="headerlink" title="五、二维费用的背包问题"></a>五、二维费用的背包问题</h2><h3 id="1、题目-4"><a href="#1、题目-4" class="headerlink" title="1、题目"></a>1、题目</h3><p>二维费用的背包问题是指：对于每件物品，具有两种不同的费用，选择这件物品必须同时付出这两种费用。对于每种费用都有一个可付出的最大值 (背包容量)。问怎样选择物品可以得到最大的价值。</p>
+<p>设第 $i$ 件物品所需的两种费用分别为 $C_{i}$ 和 $D_{i}$，两种费用可付出的最大值分别为 $V$ 和 $U$，物品的价值为 $W_{i}$。</p>
+<h3 id="2、基本思路-3"><a href="#2、基本思路-3" class="headerlink" title="2、基本思路"></a>2、基本思路</h3><p>设 $F[i, v, u]$ 表示前 $i$ 件物品付出两种费用分别为 $v$ 和 $u$ 时可获得的最大价值，状态转移方程就是</p>
+<p>$F[i, v, u]=\max \left{F[i-1, v, u], F\left[i-1, v-C_{i}, u-D_{i}\right]+W_{i}\right}$</p>
+<h3 id="3、物品总个数的限制"><a href="#3、物品总个数的限制" class="headerlink" title="3、物品总个数的限制"></a>3、物品总个数的限制</h3><p>有时，二维费用的条件是以「最多只能取 $U$ 件物品」这样一种隐含的方式给出的，这事实上相当于每件物品多了一种「件数」的费用，每个物品的件数费用均为 1，可以付出的最大件数费用为 $U$。</p>
+<p>设 $F[v, u]$ 表示付出费用 $v$、最多选 $u$ 件时可得到的最大价值，则根据物品的类型 (01、完全、多重) 用不同的方法循环更新，最后就可以在 $F[0 . . . V, 0 . . . U]$ 范围内寻找答案。</p>
+<h3 id="4、复整数域上的背包问题"><a href="#4、复整数域上的背包问题" class="headerlink" title="4、复整数域上的背包问题"></a>4、复整数域上的背包问题</h3><p>另一种看待二维背包问题的思路是：将它看待成复整数域上的背包问题。也就是说，背包的容量以及每件物品的费用都是一个复整数，而常见的一维背包问题则是自然 数域上的背包问题。</p>
+<h2 id="六、分组的背包问题"><a href="#六、分组的背包问题" class="headerlink" title="六、分组的背包问题"></a>六、分组的背包问题</h2><h3 id="1、题目-5"><a href="#1、题目-5" class="headerlink" title="1、题目"></a>1、题目</h3><p>有 $N$ 件物品和一个容量为 $V$ 的背包。第 $i$ 件物品的费用是 $C_i$，价值是 $W_i$。这些物品被划分为 $K$ 组，每组中的物品互相冲突，最多选一件。求解将哪些物品装入背包可使价值总和最大。</p>
+<h3 id="2、基本思路-4"><a href="#2、基本思路-4" class="headerlink" title="2、基本思路"></a>2、基本思路</h3><p>这个问题变成了每组物品有若干种策略：是选择本组的某一件，还是一件都不选。设 $F[k, v]$ 表示前 $k$ 组物品花费费用 $v$ 能取得的最大价值，则有</p>
+<p>$F[k, v]=\max \left{F[k-1, v], F\left[k-1, v-C_{i}\right]+W_{i} \mid\right. item \left.i \in \operatorname{group} k\right}$</p>
 ]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
       <tags>
-        <tag>hexo</tag>
+        <tag>背包问题</tag>
+        <tag>动态规划</tag>
       </tags>
   </entry>
 </search>
