@@ -2353,8 +2353,8 @@ pre .javascript .function {
 .navbar .nav.nav-main .nav-item:nth-child(2) .nav-item-link::before {
   content: '\f12a';
 }
-:nth-child(3) .nav-item-link::before {
-  content: '\f153';
+.navbar .nav.nav-main .nav-item:nth-child(3) .nav-item-link::before {
+  content: '\f18c';
 }
 :nth-child(4) .nav-item-link::before {
   content: '\f174';
